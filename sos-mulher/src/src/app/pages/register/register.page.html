@@ -38,6 +38,7 @@
       <h2>4. Acesso seguro</h2>
       <ion-input label="Senha" labelPlacement="stacked" fill="outline" type="password" [(ngModel)]="password" />
       <label class="consent"><ion-checkbox [(ngModel)]="accepted" /> Autorizo o envio dos meus dados ao acionar o socorro.</label>
+      @if (error) { <p class="form-error" role="alert">{{ error }}</p> }
       <ion-button expand="block" [disabled]="!canSubmit" (click)="submit()">Criar cadastro seguro</ion-button>
     </section>
   </main>

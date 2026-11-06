@@ -1,4 +1,5 @@
 import { Component, effect } from "@angular/core"
+import { HttpErrorResponse } from "@angular/common/http"
 import { AuthController } from "../../controllers/auth.controller"
 import { formatPhone } from "../../utils/masks"
 
@@ -15,6 +16,7 @@ export class ProfilePage {
   district = ""
   emergencyName = ""
   emergencyPhone = ""
+  error = ""
 
   constructor(private readonly auth: AuthController) {
     effect(() => {
@@ -43,17 +45,26 @@ export class ProfilePage {
     reader.readAsDataURL(file)
   }
 
-  toggleEdit(): void {
+  async toggleEdit(): Promise<void> {
     if (this.editing) {
-      this.auth.updateVictim(
-        { name: this.name, phone: this.phone, photo: this.photo },
-        {
+      this.error = ""
+      try {
+        await this.auth.updateVictim(
+          { name: this.name, phone: this.phone, photo: this.photo || undefined },
+          {
           address: this.address,
           district: this.district,
           emergencyContactName: this.emergencyName,
           emergencyContactPhone: this.emergencyPhone,
-        },
-      )
+          },
+        )
+      } catch (error) {
+        console.error("Profile update failed.", error)
+        this.error = error instanceof HttpErrorResponse
+          ? error.error?.error ?? "Não foi possível acessar o servidor."
+          : "Não foi possível salvar as alterações."
+        return
+      }
     }
     this.editing = !this.editing
   }

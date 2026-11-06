@@ -1,8 +1,9 @@
 import { Component, computed, signal } from "@angular/core"
 import { Router } from "@angular/router"
 import { OccurrenceController } from "../../controllers/occurrence.controller"
-import { Occurrence, OccurrenceStatus } from "../../models/app.models"
-import { MockDatabaseService } from "../../services/mock-database.service"
+import { Occurrence, OccurrenceStatus, User } from "../../models/app.models"
+import { AppDataService } from "../../services/app-data.service"
+import { AuthController } from "../../controllers/auth.controller"
 
 @Component({
   standalone: false,
@@ -10,6 +11,8 @@ import { MockDatabaseService } from "../../services/mock-database.service"
 })
 export class AgentDashboardPage {
   readonly filter = signal<OccurrenceStatus>("open")
+  readonly user = this.auth.currentUser
+  error = ""
   readonly visibleOccurrences = computed(() =>
     this.occurrences.byStatus(this.filter()),
   )
@@ -22,20 +25,28 @@ export class AgentDashboardPage {
 
   constructor(
     private readonly occurrences: OccurrenceController,
-    private readonly database: MockDatabaseService,
+    readonly data: AppDataService,
+    private readonly auth: AuthController,
     private readonly router: Router,
   ) {}
+
+  ngOnInit(): void {
+    void Promise.all([this.occurrences.load(), this.data.loadTeams()]).catch((error: unknown) => {
+      console.error("Could not load the agent dashboard.", error)
+      this.error = "Não foi possível carregar os dados da central."
+    })
+  }
 
   changeFilter(event: CustomEvent): void {
     this.filter.set(event.detail.value as OccurrenceStatus)
   }
 
-  victim(item: Occurrence) {
-    return this.database.getUser(item.victimUserId)
+  victim(item: Occurrence): User | undefined {
+    return item.victim
   }
 
   address(item: Occurrence): string {
-    const profile = this.database.getVictimProfile(item.victimUserId)
+    const profile = item.profile
     return profile ? `${profile.address} · ${profile.district}` : "Localização recebida"
   }
 

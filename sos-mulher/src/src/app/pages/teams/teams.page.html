@@ -8,6 +8,7 @@
     </section>
 
     <section class="list-section">
+      @if (error) { <p class="form-error" role="alert">{{ error }}</p> }
       <div class="section-heading"><div><p class="eyebrow">Patrulha Maria da Penha</p><h2>Equipes de plantão</h2></div></div>
       <ion-button expand="block" (click)="requestSupport()">
         <ion-icon slot="start" name="people-outline" />
@@ -15,7 +16,7 @@
       </ion-button>
 
       <div class="team-list">
-        @for (team of database.teams(); track team.id) {
+        @for (team of data.teams(); track team.id) {
           <article class="team-card">
             <div class="team-card-head">
               <div class="avatar-stack"><span>{{ initials(team.members[0]) }}</span><span>{{ initials(team.members[1]) }}</span></div>

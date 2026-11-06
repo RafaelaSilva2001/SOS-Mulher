@@ -7,6 +7,7 @@
 <ion-content>
   @if (occurrence(); as item) {
     <main class="mobile-page detail-view">
+      @if (error) { <p class="form-error" role="alert">{{ error }}</p> }
       <section class="map-preview">
         <div class="map-grid"></div>
         <div class="map-pin"><ion-icon name="locate-outline" /></div>

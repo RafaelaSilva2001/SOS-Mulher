@@ -8,9 +8,27 @@ export interface User {
   role: UserRole
   name: string
   cpf: string
+  phone: string
+  photo?: string
+}
+
+export interface RegisterVictimInput {
+  name: string
+  cpf: string
   password: string
   phone: string
   photo?: string
+  address: string
+  district: string
+  emergencyContactName: string
+  emergencyContactPhone: string
+  accepted: true
+}
+
+export interface AuthSession {
+  token: string
+  user: User
+  profile: VictimProfile | null
 }
 
 export interface VictimProfile {
@@ -43,12 +61,14 @@ export interface Occurrence {
   id: string
   victimUserId: string
   status: OccurrenceStatus
-  createdAt: Date
+  createdAt: string
   latitude: number
   longitude: number
   assignedTeamId?: string
-  acceptedAt?: Date
-  finishedAt?: Date
+  acceptedAt?: string
+  finishedAt?: string
+  victim?: User
+  profile?: VictimProfile
 }
 
 export interface SupportRequest {

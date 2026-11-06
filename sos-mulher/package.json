@@ -5,8 +5,11 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 8100",
+    "start": "concurrently -k -n API,APP \"npm --prefix backend run dev\" \"ng serve --port 8100 --proxy-config proxy.conf.json\"",
+    "start:api": "npm --prefix backend run dev",
     "build": "ng build",
+    "build:api": "npm --prefix backend run build",
+    "build:full": "npm run build && npm run build:api",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
@@ -38,6 +41,7 @@
     "jsdom": "^30.1.0",
     "typescript": "~6.0.0",
     "typescript-eslint": "^8.61.0",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "concurrently": "^9.2.1"
   }
 }

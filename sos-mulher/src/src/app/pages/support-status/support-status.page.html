@@ -1,13 +1,14 @@
 <ion-header><ion-toolbar class="agent-toolbar"><ion-title>Status do apoio</ion-title></ion-toolbar></ion-header>
 <ion-content>
   <main class="mobile-page support-view">
+    @if (error) { <p class="form-error" role="alert">{{ error }}</p> }
     <section class="support-hero">
       <div class="radar">
         @if (support.request().status === "assigned") { <ion-icon name="checkmark-circle-outline" /> }
         @else { <ion-spinner name="crescent" /> }
       </div>
       <span class="status-pill green">{{ support.request().status === "assigned" ? "Equipe confirmada" : "Solicitação ativa" }}</span>
-      <h1>{{ support.request().status === "assigned" ? "Equipe Bravo a caminho" : "Buscando equipe disponível" }}</h1>
+      <h1>{{ support.request().status === "assigned" ? (assignedTeam()?.name ?? "Equipe a caminho") : "Buscando equipe disponível" }}</h1>
       <p>{{ support.request().status === "assigned" ? "A equipe mais próxima aceitou o chamado." : "A central está localizando agentes próximos." }}</p>
     </section>
 
@@ -20,9 +21,9 @@
       </div>
       @if (support.request().status === "assigned") {
         <article class="assigned-team">
-          <h2>Equipe Bravo</h2>
-          <p>Agente Ribeiro e Agente Costa</p>
-          <div><span>1,8 km</span><span>Chegada em 4 min</span></div>
+          <h2>{{ assignedTeam()?.name ?? "Equipe designada" }}</h2>
+          <p>{{ assignedTeam()?.members?.join(" e ") }}</p>
+          <div><span>{{ support.request().distanceKm }} km</span><span>Chegada em {{ support.request().estimatedArrivalMinutes }} min</span></div>
         </article>
       }
       <ion-button expand="block" (click)="back()">Voltar para a equipe</ion-button>
