@@ -1,0 +1,31 @@
+<ion-header><ion-toolbar class="agent-toolbar"><ion-title>Equipe operacional</ion-title></ion-toolbar></ion-header>
+<ion-content>
+  <main class="mobile-page team-view">
+    <section class="team-summary">
+      <div><strong>{{ available() }}</strong><span>Disponíveis</span></div>
+      <div><strong>{{ inService() }}</strong><span>Em atendimento</span></div>
+      <div><strong>{{ enRoute() }}</strong><span>Em deslocamento</span></div>
+    </section>
+
+    <section class="list-section">
+      <div class="section-heading"><div><p class="eyebrow">Patrulha Maria da Penha</p><h2>Equipes de plantão</h2></div></div>
+      <ion-button expand="block" (click)="requestSupport()">
+        <ion-icon slot="start" name="people-outline" />
+        {{ support.request().status === "idle" ? "Solicitar apoio da equipe" : "Acompanhar solicitação" }}
+      </ion-button>
+
+      <div class="team-list">
+        @for (team of database.teams(); track team.id) {
+          <article class="team-card">
+            <div class="team-card-head">
+              <div class="avatar-stack"><span>{{ initials(team.members[0]) }}</span><span>{{ initials(team.members[1]) }}</span></div>
+              <div><h3>{{ team.name }}</h3><p>{{ team.members.join(" e ") }}</p></div>
+              <span class="team-status" [class.available]="team.status === 'available'" [class.route]="team.status === 'en-route'">{{ teamLabel(team.status) }}</span>
+            </div>
+            <div class="team-card-foot"><ion-icon name="radio-outline" /> {{ team.base }}</div>
+          </article>
+        }
+      </div>
+    </section>
+  </main>
+</ion-content>

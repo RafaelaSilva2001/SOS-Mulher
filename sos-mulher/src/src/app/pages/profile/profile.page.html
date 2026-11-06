@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar><ion-title>Meu perfil</ion-title></ion-toolbar>
+</ion-header>
+<ion-content>
+  <main class="mobile-page form-page">
+    <section class="profile-hero">
+      <div class="avatar-editor">
+        <img [src]="photo" [alt]="'Foto de ' + name" />
+        @if (editing) {
+          <label><input type="file" accept="image/*" (change)="selectPhoto($event)" /><ion-icon name="camera-outline" /> Alterar</label>
+        }
+      </div>
+      <h1>{{ name }}</h1>
+      <span class="verified"><ion-icon name="shield-checkmark-outline" /> Perfil verificado</span>
+    </section>
+
+    <section class="surface form-surface">
+      <div class="section-heading"><h2>Informações pessoais</h2></div>
+      <ion-input label="Nome completo" labelPlacement="stacked" fill="outline" [(ngModel)]="name" [disabled]="!editing" />
+      <ion-input class="field-gap" label="Telefone" labelPlacement="stacked" fill="outline" [(ngModel)]="phone" [disabled]="!editing" (ionInput)="phone = maskPhone($event)" />
+
+      <h2>Endereço residencial</h2>
+      <ion-input label="Endereço" labelPlacement="stacked" fill="outline" [(ngModel)]="address" [disabled]="!editing" />
+      <ion-input class="field-gap" label="Bairro" labelPlacement="stacked" fill="outline" [(ngModel)]="district" [disabled]="!editing" />
+
+      <h2>Contato de emergência</h2>
+      <ion-input label="Nome do contato" labelPlacement="stacked" fill="outline" [(ngModel)]="emergencyName" [disabled]="!editing" />
+      <ion-input class="field-gap" label="Telefone do contato" labelPlacement="stacked" fill="outline" [(ngModel)]="emergencyPhone" [disabled]="!editing" (ionInput)="emergencyPhone = maskPhone($event)" />
+
+      <ion-button expand="block" (click)="toggleEdit()">
+        {{ editing ? "Salvar alterações" : "Editar perfil" }}
+      </ion-button>
+    </section>
+  </main>
+</ion-content>

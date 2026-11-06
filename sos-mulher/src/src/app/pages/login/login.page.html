@@ -1,0 +1,55 @@
+<ion-content [fullscreen]="true" class="auth-page">
+  <main class="mobile-page login-view">
+    <section class="login-hero">
+      <div class="brand">
+        <div class="brand-mark"><ion-icon name="shield-checkmark-outline" /></div>
+        <div><strong>SOS Mulher</strong><span>Proteção ao seu alcance</span></div>
+      </div>
+      <p class="eyebrow">Bem-vinda</p>
+      <h1>Você não está sozinha.</h1>
+      <p>Acesse sua conta para encontrar apoio de forma rápida e segura.</p>
+    </section>
+
+    <section class="surface login-card">
+      <ion-segment [(ngModel)]="role" (ionChange)="selectRole(role)">
+        <ion-segment-button value="victim">Sou vítima</ion-segment-button>
+        <ion-segment-button value="agent">Sou agente</ion-segment-button>
+      </ion-segment>
+      <p class="helper">
+        {{ role === "victim" ? "Acesse seu botão de socorro." : "Acesso exclusivo para agentes." }}
+      </p>
+
+      <ion-input
+        label="CPF"
+        labelPlacement="stacked"
+        fill="outline"
+        inputmode="numeric"
+        maxlength="14"
+        [(ngModel)]="cpf"
+        (ionInput)="maskCpf($event)"
+      />
+      <ion-input
+        class="field-gap"
+        label="Senha"
+        labelPlacement="stacked"
+        fill="outline"
+        type="password"
+        [(ngModel)]="password"
+      />
+      @if (error) {
+        <div class="error-note">{{ error }}</div>
+      }
+      <ion-button expand="block" class="primary-action" (click)="login()">
+        Entrar com segurança
+      </ion-button>
+      @if (role === "victim") {
+        <ion-button fill="clear" expand="block" routerLink="/cadastro">
+          Criar minha conta
+        </ion-button>
+      }
+      <div class="secure-note">
+        <ion-icon name="lock-closed-outline" /> Dados simulados para teste
+      </div>
+    </section>
+  </main>
+</ion-content>

@@ -1,0 +1,31 @@
+<ion-header><ion-toolbar class="agent-toolbar"><ion-title>Status do apoio</ion-title></ion-toolbar></ion-header>
+<ion-content>
+  <main class="mobile-page support-view">
+    <section class="support-hero">
+      <div class="radar">
+        @if (support.request().status === "assigned") { <ion-icon name="checkmark-circle-outline" /> }
+        @else { <ion-spinner name="crescent" /> }
+      </div>
+      <span class="status-pill green">{{ support.request().status === "assigned" ? "Equipe confirmada" : "Solicitação ativa" }}</span>
+      <h1>{{ support.request().status === "assigned" ? "Equipe Bravo a caminho" : "Buscando equipe disponível" }}</h1>
+      <p>{{ support.request().status === "assigned" ? "A equipe mais próxima aceitou o chamado." : "A central está localizando agentes próximos." }}</p>
+    </section>
+
+    <section class="surface support-content">
+      <div class="protocol"><span>Protocolo<strong>{{ support.request().protocol }}</strong></span><span>Previsão<strong>{{ support.request().estimatedArrivalMinutes ? support.request().estimatedArrivalMinutes + " min" : "até 3 min" }}</strong></span></div>
+      <div class="progress-list">
+        <div class="step done"><ion-icon name="checkmark-circle-outline" /><span><strong>Solicitação enviada</strong><small>Recebida pela central</small></span></div>
+        <div class="step" [class.done]="support.request().status === 'assigned'"><ion-icon name="radio-outline" /><span><strong>Equipe localizada</strong><small>Buscando disponibilidade</small></span></div>
+        <div class="step" [class.current]="support.request().status === 'assigned'"><ion-icon name="navigate-outline" /><span><strong>Equipe em deslocamento</strong><small>{{ support.request().distanceKm ? support.request().distanceKm + " km de distância" : "Aguardando aceite" }}</small></span></div>
+      </div>
+      @if (support.request().status === "assigned") {
+        <article class="assigned-team">
+          <h2>Equipe Bravo</h2>
+          <p>Agente Ribeiro e Agente Costa</p>
+          <div><span>1,8 km</span><span>Chegada em 4 min</span></div>
+        </article>
+      }
+      <ion-button expand="block" (click)="back()">Voltar para a equipe</ion-button>
+    </section>
+  </main>
+</ion-content>

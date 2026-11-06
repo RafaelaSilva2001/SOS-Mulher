@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar class="agent-toolbar">
+    <ion-title>Central de atendimento</ion-title>
+    <ion-button slot="end" fill="clear" aria-label="Tocar sirene" (click)="playSiren()">
+      <ion-icon name="notifications-outline" />
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <main class="mobile-page agent-view">
+    <section class="agent-welcome">
+      <p class="eyebrow light">Plantão conectado</p>
+      <h1>Olá, Agente Lima</h1>
+      <div class="stats-grid">
+        <div><strong>{{ activeCount() }}</strong><span>Alertas ativos</span></div>
+        <div><strong>{{ finishedCount() }}</strong><span>Finalizados</span></div>
+      </div>
+    </section>
+
+    <section class="list-section">
+      <div class="section-heading"><div><p class="eyebrow">Ocorrências</p><h2>Chamados recentes</h2></div></div>
+      <ion-segment [value]="filter()" (ionChange)="changeFilter($event)">
+        <ion-segment-button value="open">Em aberto</ion-segment-button>
+        <ion-segment-button value="accepted">Com equipe</ion-segment-button>
+        <ion-segment-button value="finished">Finalizados</ion-segment-button>
+      </ion-segment>
+
+      <div class="occurrence-list">
+        @for (item of visibleOccurrences(); track item.id) {
+          <button
+            class="occurrence-card"
+            [class.accepted]="item.status === 'accepted'"
+            [class.finished]="item.status === 'finished'"
+            (click)="open(item)"
+          >
+            <div class="occurrence-top">
+              <span class="status-pill" [class.green]="item.status !== 'open'">{{ label(item.status) }}</span>
+              <time>{{ item.createdAt | date: "HH:mm" }}</time>
+            </div>
+            <div class="victim-row">
+              <img [src]="victim(item)?.photo" [alt]="'Foto de ' + victim(item)?.name" />
+              <div><h3>{{ victim(item)?.name }}</h3><p><ion-icon name="locate-outline" /> {{ address(item) }}</p></div>
+            </div>
+            <div class="occurrence-footer"><span>Recebido agora</span><strong>Ver chamado</strong></div>
+          </button>
+        } @empty {
+          <div class="empty-state">
+            <ion-icon name="radio-outline" />
+            <h3>{{ emptyTitle() }}</h3>
+            <p>{{ filter() === "open" ? "Novos pedidos de socorro aparecerão aqui." : "Não há registros nesta categoria." }}</p>
+          </div>
+        }
+      </div>
+    </section>
+  </main>
+</ion-content>

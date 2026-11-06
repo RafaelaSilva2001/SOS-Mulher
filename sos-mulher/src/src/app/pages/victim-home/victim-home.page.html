@@ -1,0 +1,51 @@
+<ion-content [fullscreen]="true">
+  <main class="mobile-page victim-view">
+    <header class="topbar">
+      <div class="brand compact">
+        <div class="brand-mark"><ion-icon name="shield-checkmark-outline" /></div>
+        <strong>SOS Mulher</strong>
+      </div>
+      <button class="profile-photo" (click)="openProfile()">
+        <img [src]="user()?.photo" [alt]="'Foto de ' + user()?.name" />
+      </button>
+    </header>
+
+    <section class="page-intro">
+      <p class="eyebrow">Olá, {{ firstName() }}</p>
+      <h1>Estamos aqui com você.</h1>
+      <p>Em uma emergência, toque no botão abaixo para pedir ajuda imediata.</p>
+    </section>
+
+    @if (loading()) {
+      <section class="panic-zone"><ion-spinner name="crescent" /></section>
+    } @else {
+      @if (occurrence(); as current) {
+        <section class="active-alert-card" [class.finished]="current.status === 'finished'">
+          <div class="status-icon"><ion-icon [name]="current.status === 'finished' ? 'checkmark-circle-outline' : 'radio-outline'" /></div>
+          <span class="status-pill" [class.green]="current.status !== 'open'">
+            {{ statusLabel(current.status) }}
+          </span>
+          <h2>{{ statusTitle(current.status) }}</h2>
+          <p>{{ statusDescription(current.status) }}</p>
+        </section>
+      } @else {
+        <section class="panic-zone">
+          <button class="panic-button" (click)="requestHelp()">
+            <ion-icon name="warning-outline" />
+            <strong>PEDIR<br />SOCORRO</strong>
+            <small>Toque uma vez</small>
+          </button>
+        </section>
+      }
+    }
+
+    <section class="info-card">
+      <ion-icon name="checkmark-circle-outline" />
+      <div><strong>Seu perfil está pronto</strong><p>Dados, foto e contato de emergência disponíveis.</p></div>
+    </section>
+    <section class="privacy-note">
+      <ion-icon name="lock-closed-outline" />
+      <p><strong>Conexão protegida</strong><span>Seus dados só são enviados durante uma ocorrência.</span></p>
+    </section>
+  </main>
+</ion-content>

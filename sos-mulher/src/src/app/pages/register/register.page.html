@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-back-button defaultHref="/acesso" /></ion-buttons>
+    <ion-title>Criar cadastro</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <main class="mobile-page form-page">
+    <section class="intro-card">
+      <ion-icon name="shield-checkmark-outline" />
+      <div><strong>Perfil da vítima</strong><p>Prepare seus dados para uma emergência.</p></div>
+    </section>
+
+    <section class="surface form-surface">
+      <div class="section-heading"><span>Foto do perfil</span><small>Opcional</small></div>
+      <label class="photo-picker">
+        <input type="file" accept="image/png,image/jpeg,image/webp" (change)="selectPhoto($event)" />
+        <span class="photo-preview">
+          @if (photo) { <img [src]="photo" alt="Pré-visualização" /> }
+          @else { <ion-icon name="camera-outline" /> }
+        </span>
+        <span><strong>{{ photo ? "Alterar foto" : "Adicionar uma foto" }}</strong><small>JPG, PNG ou WEBP · até 5 MB</small></span>
+      </label>
+
+      <h2>1. Informações pessoais</h2>
+      <ion-input label="Nome completo" labelPlacement="stacked" fill="outline" [(ngModel)]="name" />
+      <ion-input class="field-gap" label="CPF" labelPlacement="stacked" fill="outline" maxlength="14" [(ngModel)]="cpf" (ionInput)="cpf = formatCpfValue($event)" />
+      <ion-input class="field-gap" label="Telefone" labelPlacement="stacked" fill="outline" maxlength="15" [(ngModel)]="phone" (ionInput)="phone = formatPhoneValue($event)" />
+
+      <h2>2. Localização residencial</h2>
+      <ion-input label="Endereço" labelPlacement="stacked" fill="outline" [(ngModel)]="address" />
+      <ion-input class="field-gap" label="Bairro" labelPlacement="stacked" fill="outline" [(ngModel)]="district" />
+
+      <h2>3. Contato de emergência</h2>
+      <ion-input label="Nome do contato" labelPlacement="stacked" fill="outline" [(ngModel)]="emergencyName" />
+      <ion-input class="field-gap" label="Telefone do contato" labelPlacement="stacked" fill="outline" maxlength="15" [(ngModel)]="emergencyPhone" (ionInput)="emergencyPhone = formatPhoneValue($event)" />
+
+      <h2>4. Acesso seguro</h2>
+      <ion-input label="Senha" labelPlacement="stacked" fill="outline" type="password" [(ngModel)]="password" />
+      <label class="consent"><ion-checkbox [(ngModel)]="accepted" /> Autorizo o envio dos meus dados ao acionar o socorro.</label>
+      <ion-button expand="block" [disabled]="!canSubmit" (click)="submit()">Criar cadastro seguro</ion-button>
+    </section>
+  </main>
+</ion-content>

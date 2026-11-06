@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar class="agent-toolbar">
+    <ion-button slot="start" fill="clear" (click)="back()"><ion-icon name="arrow-back-outline" /></ion-button>
+    <ion-title>Detalhes do chamado</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  @if (occurrence(); as item) {
+    <main class="mobile-page detail-view">
+      <section class="map-preview">
+        <div class="map-grid"></div>
+        <div class="map-pin"><ion-icon name="locate-outline" /></div>
+        <div class="eta"><strong>6 min</strong><span>2,4 km</span></div>
+      </section>
+
+      <section class="detail-content">
+        <span class="status-pill" [class.green]="item.status !== 'open'">{{ statusLabel(item.status) }}</span>
+        <div class="detail-victim">
+          <img [src]="victim()?.photo" [alt]="'Foto de ' + victim()?.name" />
+          <div><h1>{{ victim()?.name }}</h1><p>Vítima com perfil verificado</p></div>
+        </div>
+
+        <div class="detail-grid">
+          <div><ion-icon name="phone-portrait-outline" /><span>Telefone<strong>{{ victim()?.phone }}</strong></span></div>
+          <div><ion-icon name="locate-outline" /><span>Endereço<strong>{{ profile()?.address }}<br />{{ profile()?.district }}, {{ profile()?.city }} - {{ profile()?.state }}</strong></span></div>
+          <div><ion-icon name="people-outline" /><span>Contato de emergência<strong>{{ profile()?.emergencyContactName }}<br />{{ profile()?.emergencyContactPhone }}</strong></span></div>
+        </div>
+
+        @if (item.status === "open") {
+          <ion-button expand="block" (click)="accept(item.id)">
+            <ion-icon slot="start" name="navigate-outline" /> Iniciar rota até a vítima
+          </ion-button>
+        } @else if (item.status === "accepted") {
+          <div class="accepted-banner"><ion-icon name="checkmark-circle-outline" /> Equipe em deslocamento</div>
+          <ion-button expand="block" color="danger" fill="outline" (click)="finish(item.id)">
+            Encerrar atendimento
+          </ion-button>
+        } @else {
+          <div class="finished-banner"><ion-icon name="checkmark-circle-outline" /> Atendimento finalizado</div>
+        }
+      </section>
+    </main>
+  }
+</ion-content>
