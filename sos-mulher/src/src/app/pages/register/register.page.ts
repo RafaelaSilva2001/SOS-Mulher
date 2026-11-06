@@ -1,7 +1,7 @@
 import { Component } from "@angular/core"
+import { HttpErrorResponse } from "@angular/common/http"
 import { Router } from "@angular/router"
 import { AuthController } from "../../controllers/auth.controller"
-import { User, VictimProfile } from "../../models/app.models"
 import { formatCpf, formatPhone } from "../../utils/masks"
 
 @Component({
@@ -20,6 +20,7 @@ export class RegisterPage {
   password = ""
   photo?: string
   accepted = false
+  error = ""
 
   constructor(
     private readonly auth: AuthController,
@@ -46,28 +47,27 @@ export class RegisterPage {
     reader.readAsDataURL(file)
   }
 
-  submit(): void {
-    const id = `victim-${Date.now()}`
-    const user: User = {
-      id: `${id}-user`,
-      role: "victim",
-      name: this.name,
-      cpf: this.cpf,
-      phone: this.phone,
-      password: this.password,
-      photo: this.photo,
+  async submit(): Promise<void> {
+    this.error = ""
+    try {
+      await this.auth.registerVictim({
+        name: this.name,
+        cpf: this.cpf,
+        phone: this.phone,
+        password: this.password,
+        photo: this.photo,
+        address: this.address,
+        district: this.district,
+        emergencyContactName: this.emergencyName,
+        emergencyContactPhone: this.emergencyPhone,
+        accepted: true,
+      })
+      await this.router.navigateByUrl("/vitima/inicio")
+    } catch (error) {
+      console.error("Registration failed.", error)
+      this.error = error instanceof HttpErrorResponse
+        ? error.error?.error ?? "Não foi possível acessar o servidor."
+        : "Não foi possível concluir o cadastro."
     }
-    const profile: VictimProfile = {
-      id,
-      userId: user.id,
-      address: this.address,
-      district: this.district,
-      city: "Recife",
-      state: "PE",
-      emergencyContactName: this.emergencyName,
-      emergencyContactPhone: this.emergencyPhone,
-    }
-    this.auth.registerVictim(user, profile)
-    void this.router.navigateByUrl("/vitima/inicio")
   }
 }

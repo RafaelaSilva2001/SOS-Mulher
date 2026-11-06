@@ -13,8 +13,9 @@ export class GeolocationService {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       }
-    } catch {
-      return { latitude: -8.0476, longitude: -34.877 }
+    } catch (error) {
+      console.error("Could not get the device location.", error)
+      throw new Error("Não foi possível obter sua localização. Ative o GPS e permita o acesso para solicitar ajuda.")
     }
   }
 }

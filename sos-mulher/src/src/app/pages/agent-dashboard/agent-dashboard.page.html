@@ -10,7 +10,7 @@
   <main class="mobile-page agent-view">
     <section class="agent-welcome">
       <p class="eyebrow light">Plantão conectado</p>
-      <h1>Olá, Agente Lima</h1>
+      <h1>Olá, {{ user()?.name ?? "Agente" }}</h1>
       <div class="stats-grid">
         <div><strong>{{ activeCount() }}</strong><span>Alertas ativos</span></div>
         <div><strong>{{ finishedCount() }}</strong><span>Finalizados</span></div>
@@ -18,6 +18,7 @@
     </section>
 
     <section class="list-section">
+      @if (error) { <p class="form-error" role="alert">{{ error }}</p> }
       <div class="section-heading"><div><p class="eyebrow">Ocorrências</p><h2>Chamados recentes</h2></div></div>
       <ion-segment [value]="filter()" (ionChange)="changeFilter($event)">
         <ion-segment-button value="open">Em aberto</ion-segment-button>

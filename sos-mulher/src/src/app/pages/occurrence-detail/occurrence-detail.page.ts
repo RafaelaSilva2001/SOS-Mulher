@@ -1,7 +1,7 @@
 import { Component, computed } from "@angular/core"
+import { HttpErrorResponse } from "@angular/common/http"
 import { ActivatedRoute, Router } from "@angular/router"
 import { OccurrenceController } from "../../controllers/occurrence.controller"
-import { MockDatabaseService } from "../../services/mock-database.service"
 
 @Component({
   standalone: false,
@@ -9,24 +9,25 @@ import { MockDatabaseService } from "../../services/mock-database.service"
 })
 export class OccurrenceDetailPage {
   private readonly id = this.route.snapshot.paramMap.get("id") ?? ""
+  error = ""
   readonly occurrence = computed(() =>
     this.occurrences.occurrences().find((item) => item.id === this.id),
   )
-  readonly victim = computed(() => {
-    const item = this.occurrence()
-    return item ? this.database.getUser(item.victimUserId) : undefined
-  })
-  readonly profile = computed(() => {
-    const item = this.occurrence()
-    return item ? this.database.getVictimProfile(item.victimUserId) : undefined
-  })
+  readonly victim = computed(() => this.occurrence()?.victim)
+  readonly profile = computed(() => this.occurrence()?.profile)
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly occurrences: OccurrenceController,
-    private readonly database: MockDatabaseService,
   ) {}
+
+  ngOnInit(): void {
+    void this.occurrences.load().catch((error: unknown) => {
+      console.error("Could not load occurrence details.", error)
+      this.error = "Não foi possível carregar os detalhes do chamado."
+    })
+  }
 
   statusLabel(status: string): string {
     if (status === "accepted") return "Equipe em deslocamento"
@@ -34,12 +35,24 @@ export class OccurrenceDetailPage {
     return "Emergência ativa"
   }
 
-  accept(id: string): void {
-    this.occurrences.accept(id)
+  async accept(id: string): Promise<void> {
+    await this.updateStatus(() => this.occurrences.accept(id))
   }
 
-  finish(id: string): void {
-    this.occurrences.finish(id)
+  async finish(id: string): Promise<void> {
+    await this.updateStatus(() => this.occurrences.finish(id))
+  }
+
+  private async updateStatus(update: () => Promise<void>): Promise<void> {
+    this.error = ""
+    try {
+      await update()
+    } catch (error) {
+      console.error("Could not update occurrence status.", error)
+      this.error = error instanceof HttpErrorResponse
+        ? error.error?.error ?? "Não foi possível acessar o servidor."
+        : "Não foi possível atualizar o chamado."
+    }
   }
 
   back(): void {

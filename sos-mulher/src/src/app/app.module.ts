@@ -1,4 +1,5 @@
 import { NgModule } from "@angular/core"
+import { HttpClientModule } from "@angular/common/http"
 import { BrowserModule } from "@angular/platform-browser"
 import { FormsModule } from "@angular/forms"
 import { RouteReuseStrategy } from "@angular/router"
@@ -30,7 +31,13 @@ import { VictimTabsPage } from "./pages/victim-tabs/victim-tabs.page"
     TeamsPage,
     SupportStatusPage,
   ],
-  imports: [BrowserModule, FormsModule, IonicModule.forRoot({ mode: "md" }), AppRoutingModule],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    IonicModule.forRoot({ mode: "md" }),
+    AppRoutingModule,
+  ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })

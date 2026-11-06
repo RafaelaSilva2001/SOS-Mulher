@@ -1,4 +1,5 @@
 import { Component } from "@angular/core"
+import { HttpErrorResponse } from "@angular/common/http"
 import { Router } from "@angular/router"
 import { AuthController } from "../../controllers/auth.controller"
 import { UserRole } from "../../models/app.models"
@@ -28,15 +29,23 @@ export class LoginPage {
     this.cpf = formatCpf(String(event.detail.value ?? ""))
   }
 
-  login(): void {
-    if (!this.auth.login(this.role, this.cpf, this.password)) {
-      this.error = "CPF ou senha não encontrados para este perfil."
-      return
+  async login(): Promise<void> {
+    this.error = ""
+    try {
+      if (!(await this.auth.login(this.role, this.cpf, this.password))) {
+        this.error = "CPF ou senha não encontrados para este perfil."
+        return
+      }
+      if (this.role === "agent") this.playSiren()
+      await this.router.navigateByUrl(
+        this.role === "victim" ? "/vitima/inicio" : "/agente/ocorrencias",
+      )
+    } catch (error) {
+      console.error("Login failed.", error)
+      this.error = error instanceof HttpErrorResponse
+        ? error.error?.error ?? "Não foi possível acessar o servidor."
+        : "Não foi possível concluir o login."
     }
-    if (this.role === "agent") this.playSiren()
-    void this.router.navigateByUrl(
-      this.role === "victim" ? "/vitima/inicio" : "/agente/ocorrencias",
-    )
   }
 
   private playSiren(): void {

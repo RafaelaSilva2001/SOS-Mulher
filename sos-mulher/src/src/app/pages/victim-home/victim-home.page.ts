@@ -1,4 +1,5 @@
 import { Component, computed, signal } from "@angular/core"
+import { HttpErrorResponse } from "@angular/common/http"
 import { Router } from "@angular/router"
 import { AuthController } from "../../controllers/auth.controller"
 import { OccurrenceController } from "../../controllers/occurrence.controller"
@@ -12,6 +13,7 @@ export class VictimHomePage {
   readonly occurrence = this.occurrences.currentVictimOccurrence
   readonly loading = signal(false)
   readonly firstName = computed(() => this.user()?.name.split(" ")[0] ?? "")
+  error = ""
 
   constructor(
     private readonly auth: AuthController,
@@ -19,10 +21,26 @@ export class VictimHomePage {
     private readonly router: Router,
   ) {}
 
+  ngOnInit(): void {
+    void this.occurrences.load().catch((error: unknown) => {
+      console.error("Could not load occurrences.", error)
+      this.error = "Não foi possível carregar seus chamados."
+    })
+  }
+
   async requestHelp(): Promise<void> {
+    this.error = ""
     this.loading.set(true)
-    await this.occurrences.requestHelp()
-    this.loading.set(false)
+    try {
+      await this.occurrences.requestHelp()
+    } catch (error) {
+      console.error("Help request failed.", error)
+      this.error = error instanceof HttpErrorResponse
+        ? error.error?.error ?? "Não foi possível acessar o servidor."
+        : error instanceof Error ? error.message : "Não foi possível solicitar ajuda."
+    } finally {
+      this.loading.set(false)
+    }
   }
 
   openProfile(): void {

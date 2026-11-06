@@ -15,6 +15,7 @@
     </section>
 
     <section class="surface form-surface">
+      @if (error) { <p class="form-error" role="alert">{{ error }}</p> }
       <div class="section-heading"><h2>Informações pessoais</h2></div>
       <ion-input label="Nome completo" labelPlacement="stacked" fill="outline" [(ngModel)]="name" [disabled]="!editing" />
       <ion-input class="field-gap" label="Telefone" labelPlacement="stacked" fill="outline" [(ngModel)]="phone" [disabled]="!editing" (ionInput)="phone = maskPhone($event)" />
